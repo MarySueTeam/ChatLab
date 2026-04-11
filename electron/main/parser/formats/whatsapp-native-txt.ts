@@ -180,10 +180,13 @@ function detectMessageType(content: string): MessageType {
 function parseWhatsAppTime(timeStr: string, isV2Format: boolean = false): number {
   if (isV2Format) {
     // 方括号格式：规范化特殊空格（Thin Space U+2009, NNBSP U+202F）和逗号
-    const normalizedStr = timeStr.replace(/[\u2009\u202F]/g, ' ').replace(',', '')
-    // 检测 12 小时制（AM/PM）
-    const is12HourFormat = /\s\d{1,2}:\d{2}:\d{2}\s+(?:AM|PM)$/i.test(normalizedStr)
-    const match = normalizedStr.match(/^(\d{1,4})\/(\d{1,2})\/(\d{2,4}) (\d{1,2}):(\d{2}):(\d{2})(?:\s+(AM|PM))?$/i)
+    // 逗号替换为空格（非删除），确保日期和时间之间总有分隔
+    const normalizedStr = timeStr
+      .replace(/[\u2009\u202F]/g, ' ')
+      .replace(',', ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+    const match = normalizedStr.match(/^(\d{1,4})\/(\d{1,2})\/(\d{2,4}) (\d{1,2}):(\d{2}):(\d{2})(?:\s*(AM|PM))?$/i)
     if (match) {
       const [, part1, part2, part3, hour, minute, second, ampm] = match
       let year: number, month: number, day: number, hourNum: number
@@ -206,7 +209,7 @@ function parseWhatsAppTime(timeStr: string, isV2Format: boolean = false): number
       }
 
       hourNum = parseInt(hour, 10)
-      if (is12HourFormat && ampm) {
+      if (ampm) {
         if (ampm.toUpperCase() === 'PM' && hourNum !== 12) {
           hourNum += 12
         } else if (ampm.toUpperCase() === 'AM' && hourNum === 12) {
