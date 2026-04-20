@@ -1,5 +1,31 @@
 [
   {
+    "version": "0.17.5",
+    "date": "2026-04-21",
+    "summary": "This release focuses on a broad set of bug fixes to improve overall stability.",
+    "changes": [
+      {
+        "type": "feat",
+        "items": [
+          "Refined the visual style of relationship cards.",
+          "Replaced the `node-machine-id` dependency with native machine identity logic to improve API key update reliability on Linux.",
+          "Added an option to keep original records when merging chat histories.",
+          "Added a verification button next to API endpoints for preset and third-party services."
+        ]
+      },
+      {
+        "type": "fix",
+        "items": [
+          "Hardened the data source migration strategy for safer migrations.",
+          "Fixed incorrect empty-state rendering for topics with very few messages.",
+          "Fixed local model validation failures.",
+          "Fixed an issue where the selected tab reset after switching conversations.",
+          "Fixed a white-screen issue in Automation pages after upgrading legacy `dataSources` structures."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.17.4",
     "date": "2026-04-19",
     "summary": "Implemented the full Import API v1 protocol and added hierarchical data source management, now supporting automatic chat history sync.",
