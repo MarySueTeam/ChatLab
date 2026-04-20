@@ -6,6 +6,7 @@ import { SubTabs } from '@/components/UI'
 import { ChatExplorer } from '../AIChat'
 import SQLLabTab from './SQLLabTab.vue'
 import ToolTestTab from './ToolTestTab.vue'
+import { KeywordAnalysis } from './quotes'
 import { useSettingsStore } from '@/stores/settings'
 
 const { t } = useI18n()
@@ -23,7 +24,10 @@ const props = defineProps<{
 
 const subTabs = computed(() => {
   if (props.mode === 'sql-only') {
-    const tabs = [{ id: 'sql-lab', label: t('ai.tab.sqlLab'), icon: 'i-heroicons-command-line' }]
+    const tabs = [
+      { id: 'sql-lab', label: t('ai.tab.sqlLab'), icon: 'i-heroicons-command-line' },
+      { id: 'keyword', label: t('analysis.subTabs.quotes.keywordAnalysis'), icon: 'i-heroicons-magnifying-glass' },
+    ]
     if (settingsStore.debugMode) {
       tabs.push({ id: 'tool-test', label: t('ai.lab.basicTools'), icon: 'i-heroicons-wrench-screwdriver' })
     }
@@ -42,7 +46,7 @@ watch(
   () => route.query.aiSubTab,
   (nextTab) => {
     if (props.mode === 'sql-only') {
-      if (nextTab === 'sql-lab' || (nextTab === 'tool-test' && settingsStore.debugMode)) {
+      if (nextTab === 'keyword' || nextTab === 'sql-lab' || (nextTab === 'tool-test' && settingsStore.debugMode)) {
         activeSubTab.value = nextTab
       }
       return
@@ -95,6 +99,12 @@ defineExpose({
           :time-filter="timeFilter"
           :chat-type="chatType"
         />
+        <!-- 关键词分析 -->
+        <div v-else-if="activeSubTab === 'keyword'" class="h-full overflow-auto">
+          <div class="main-content mx-auto max-w-3xl p-6">
+            <KeywordAnalysis :session-id="props.sessionId" :time-filter="props.timeFilter" />
+          </div>
+        </div>
         <!-- 基础工具测试 -->
         <ToolTestTab v-else-if="activeSubTab === 'tool-test'" class="h-full" :session-id="props.sessionId" />
         <!-- SQL 实验室 -->

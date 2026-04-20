@@ -31,7 +31,7 @@
       "error": "Import interrupted"
     },
     "processed": "{count} messages processed",
-    "tutorial": "View import tutorial",
+    "tutorial": "How to export chat records",
     "viewLog": "View import log",
     "cannotReadPath": "Cannot read file path",
     "preparing": "Preparing import...",

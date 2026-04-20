@@ -9,7 +9,6 @@ import AITab from '@/components/analysis/AITab.vue'
 import { ChatExplorer } from '@/components/AIChat'
 import OverviewTab from './components/OverviewTab.vue'
 import ViewTab from './components/ViewTab.vue'
-import QuotesTab from './components/QuotesTab.vue'
 import MemberManagementPanel from './components/MemberTab.vue'
 import PageHeader from '@/components/layout/PageHeader.vue'
 import SessionIndexModal from '@/components/analysis/SessionIndexModal.vue'
@@ -49,11 +48,10 @@ function openChatRecordViewer() {
   layoutStore.openChatRecordDrawer({})
 }
 
-// Tab 配置 - 私聊包含总览、视图、语录、AI 对话和实验室
+// Tab 配置 - 私聊包含总览、视图、AI 对话和实验室（关键词分析已移至实验室）
 const tabs = [
   { id: 'overview', labelKey: 'analysis.tabs.overview', icon: 'i-heroicons-chart-pie' },
   { id: 'view', labelKey: 'analysis.tabs.view', icon: 'i-heroicons-presentation-chart-bar' },
-  { id: 'quotes', labelKey: 'analysis.tabs.quotes', icon: 'i-heroicons-chat-bubble-left-right' },
   { id: 'ai-chat', labelKey: 'analysis.tabs.aiChat', icon: 'i-heroicons-chat-bubble-left-ellipsis' },
   { id: 'lab', labelKey: 'analysis.tabs.lab', icon: 'i-heroicons-beaker' },
 ]
@@ -208,12 +206,6 @@ const otherMemberAvatar = computed(() => {
               :session-name="session.name"
               :time-filter="timeFilter"
             />
-            <QuotesTab
-              v-else-if="activeTab === 'quotes'"
-              :key="'quotes-' + currentSessionId"
-              :session-id="currentSessionId!"
-              :time-filter="timeFilter"
-            />
             <ChatExplorer
               v-else-if="activeTab === 'ai-chat'"
               :key="'ai-chat-' + currentSessionId"
@@ -226,6 +218,7 @@ const otherMemberAvatar = computed(() => {
               :key="'lab-' + currentSessionId"
               :session-id="currentSessionId!"
               :session-name="session.name"
+              :time-filter="timeFilter"
               chat-type="private"
               mode="sql-only"
             />

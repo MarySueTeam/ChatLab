@@ -31,7 +31,7 @@
       "error": "匯入中斷"
     },
     "processed": "已處理 {count} 則訊息",
-    "tutorial": "查看聊天紀錄匯入教學",
+    "tutorial": "如何匯出聊天紀錄",
     "viewLog": "檢視匯入日誌",
     "cannotReadPath": "無法讀取檔案路徑",
     "preparing": "準備匯入...",

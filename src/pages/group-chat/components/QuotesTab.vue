@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { SubTabs } from '@/components/UI'
-import { CatchphraseTab, HotRepeatTab, KeywordAnalysis } from '@/components/analysis/quotes'
+import { CatchphraseTab, HotRepeatTab } from '@/components/analysis/quotes'
 
 const { t } = useI18n()
 
@@ -24,7 +24,6 @@ const subTabs = computed(() => [
     label: t('analysis.subTabs.quotes.catchphrase'),
     icon: 'i-heroicons-chat-bubble-bottom-center-text',
   },
-  { id: 'keyword', label: t('analysis.subTabs.quotes.keywordAnalysis'), icon: 'i-heroicons-magnifying-glass' },
 ])
 
 const activeSubTab = ref('hot-repeat')
@@ -51,11 +50,6 @@ const activeSubTab = ref('hot-repeat')
           :session-id="props.sessionId"
           :time-filter="props.timeFilter"
         />
-
-        <!-- 关键词分析 -->
-        <div v-else-if="activeSubTab === 'keyword'" class="main-content mx-auto max-w-3xl p-6">
-          <KeywordAnalysis :session-id="props.sessionId" :time-filter="props.timeFilter" />
-        </div>
       </Transition>
     </div>
   </div>

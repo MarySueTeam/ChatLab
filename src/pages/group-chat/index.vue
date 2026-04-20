@@ -217,6 +217,7 @@ const { headerDescription } = useSessionHeaderDescription({
               :key="'lab-' + currentSessionId"
               :session-id="currentSessionId!"
               :session-name="session.name"
+              :time-filter="timeFilter"
               chat-type="group"
               mode="sql-only"
             />
