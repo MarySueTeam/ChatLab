@@ -1,5 +1,33 @@
 [
   {
+    "version": "0.18.0",
+    "date": "2026-04-23",
+    "summary": "This release improves AI chat interactions, consolidates several analysis entry points, and makes data source sync and Windows updates more reliable.",
+    "changes": [
+      {
+        "type": "feat",
+        "items": [
+          "Improve AI assistant interactions.",
+          "Update the helper text in the Add Data Source form.",
+          "Add a Mini mode to the Tool Panel.",
+          "Move the chat history viewer into the Tool Panel.",
+          "Unify the relationship analysis tabs.",
+          "Move the Quotes module into Insights.",
+          "Move keyword analysis into Labs."
+        ]
+      },
+      {
+        "type": "fix",
+        "items": [
+          "Fix existing type warnings.",
+          "Add a 60-second overlap window to Pull incremental sync to prevent missed messages.",
+          "Set Pull requests to `limit=1000` to avoid slowdowns when remote sources export too much data at once.",
+          "Fix a Windows update issue where an NSIS popup could interrupt silent installation."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.17.5",
     "date": "2026-04-21",
     "summary": "This release focuses on a broad set of bug fixes to improve overall stability.",
