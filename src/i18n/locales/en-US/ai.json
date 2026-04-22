@@ -174,9 +174,16 @@
     "conversation": {
       "title": "AI Conversations",
       "newChat": "New Chat",
+      "newConversation": "New Chat",
       "empty": "No history yet",
       "startNew": "Start New Chat",
       "titlePlaceholder": "Enter title...",
+      "group": {
+        "last7Days": "Last 7 Days",
+        "last30Days": "Last 30 Days"
+      },
+      "rename": "Rename",
+      "delete": "Delete",
       "export": {
         "createdAt": "Created",
         "user": "User",
@@ -256,11 +263,12 @@
   "assistant": {
     "selector": {
       "title": "Choose an assistant to start",
+      "heroTitlePrefix": "Chat with",
+      "heroTitleSuffix": "",
       "subtitle": "Each assistant specializes in different types of analysis tasks. Pick the one that best fits your needs.",
       "noAssistants": "No assistants available for this context",
       "manage": "Manage Assistants",
-      "addNew": "New Assistant",
-      "rememberSelection": "Remember this choice for 7 days"
+      "addNew": "New Assistant"
     },
     "config": {
       "viewTitle": "View Config",

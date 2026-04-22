@@ -105,7 +105,6 @@ export interface AIChatSessionState {
   locale: string
   timeFilter?: { startTs: number; endTs: number }
   selectedAssistantId: string | null
-  showAssistantSelector: boolean
   messages: ChatMessage[]
   sourceMessages: SourceMessage[]
   currentKeywords: string[]
@@ -196,7 +195,6 @@ function createSessionState(params: EnsureAIChatSessionParams): AIChatSessionSta
     locale: params.locale,
     timeFilter: params.timeFilter,
     selectedAssistantId: null,
-    showAssistantSelector: true,
     messages: draftBuffer.messages,
     sourceMessages: draftBuffer.sourceMessages,
     currentKeywords: draftBuffer.currentKeywords,
@@ -291,7 +289,6 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
     state.sourceMessages = buffer.sourceMessages
     state.currentKeywords = buffer.currentKeywords
     state.selectedAssistantId = buffer.assistantId
-    state.showAssistantSelector = bufferKey === DRAFT_CONVERSATION_KEY && !buffer.assistantId
   }
 
   function renameBufferKey(state: AIChatSessionState, fromKey: string, toKey: string): ConversationBuffer {
@@ -424,20 +421,7 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
     const buffer = getOrCreateBuffer(state, getDisplayedBufferKey(state), assistantId)
     buffer.assistantId = assistantId
     state.selectedAssistantId = assistantId
-    state.showAssistantSelector = false
     assistantStore.selectAssistant(assistantId)
-    return true
-  }
-
-  function clearAssistantForSession(chatKey: string): boolean {
-    const state = getSessionState(chatKey)
-    if (!state || state.isAIThinking) return false
-
-    // 返回助手选择页时切回独立草稿 buffer，不污染已有历史对话的助手绑定。
-    const draftBuffer = createConversationBuffer(null)
-    state.conversationBuffers[DRAFT_CONVERSATION_KEY] = draftBuffer
-    bindDisplayedBuffer(state, DRAFT_CONVERSATION_KEY)
-    assistantStore.clearSelection()
     return true
   }
 
@@ -514,13 +498,11 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
       await assistantStore.loadAssistants()
     }
 
-    const rememberedAssistantId = assistantStore.getRememberedAssistantIdForContext(state.chatType, state.locale)
-    if (rememberedAssistantId && selectAssistantForSession(chatKey, rememberedAssistantId)) {
-      startNewConversation(chatKey)
-      return
+    if (!state.selectedAssistantId) {
+      const defaultId = getDefaultGeneralAssistantId(state.locale)
+      selectAssistantForSession(chatKey, defaultId)
     }
-
-    clearAssistantForSession(chatKey)
+    startNewConversation(chatKey)
   }
 
   function startNewConversation(chatKey: string, welcomeMessage?: string): boolean {
@@ -530,7 +512,6 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
     const draftBuffer = createConversationBuffer(state.selectedAssistantId)
     state.conversationBuffers[DRAFT_CONVERSATION_KEY] = draftBuffer
     bindDisplayedBuffer(state, DRAFT_CONVERSATION_KEY)
-    state.showAssistantSelector = false
     state.currentToolStatus = null
     state.toolsUsedInCurrentRound = []
     state.isLoadingSource = false
@@ -1038,7 +1019,6 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
     getActiveTaskState,
     applySessionAssistantSelection,
     selectAssistantForSession,
-    clearAssistantForSession,
     loadConversation,
     focusConversation,
     focusActiveTaskConversation,

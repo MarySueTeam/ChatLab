@@ -56,9 +56,7 @@ watch(
   { immediate: true }
 )
 
-const availableSessions = computed(() =>
-  remoteSessions.value.filter((s) => !props.subscribedRemoteIds?.has(s.id))
-)
+const availableSessions = computed(() => remoteSessions.value.filter((s) => !props.subscribedRemoteIds?.has(s.id)))
 
 const allSelected = computed(
   () => availableSessions.value.length > 0 && selectedSessionIds.value.size === availableSessions.value.length

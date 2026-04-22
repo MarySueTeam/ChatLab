@@ -67,7 +67,11 @@ export function registerApiHandlers(_ctx: IpcContext): void {
 
   ipcMain.handle(
     'api:updateDataSource',
-    (_event, id: string, updates: Partial<Pick<DataSource, 'name' | 'baseUrl' | 'token' | 'intervalMinutes' | 'enabled'>>) => {
+    (
+      _event,
+      id: string,
+      updates: Partial<Pick<DataSource, 'name' | 'baseUrl' | 'token' | 'intervalMinutes' | 'enabled'>>
+    ) => {
       const ds = updateDataSource(id, updates)
       if (ds) {
         reloadTimer(ds.id)

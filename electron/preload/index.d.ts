@@ -1040,7 +1040,12 @@ interface ApiServerApi {
   regenerateToken: () => Promise<ApiServerConfig>
   onStartupError: (callback: (data: { error: string }) => void) => () => void
   getDataSources: () => Promise<DataSource[]>
-  addDataSource: (partial: { name?: string; baseUrl: string; token: string; intervalMinutes: number }) => Promise<DataSource>
+  addDataSource: (partial: {
+    name?: string
+    baseUrl: string
+    token: string
+    intervalMinutes: number
+  }) => Promise<DataSource>
   updateDataSource: (
     id: string,
     updates: Partial<Pick<DataSource, 'name' | 'baseUrl' | 'token' | 'intervalMinutes' | 'enabled'>>

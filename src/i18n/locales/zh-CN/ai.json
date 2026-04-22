@@ -174,9 +174,16 @@
     "conversation": {
       "title": "AI对话记录",
       "newChat": "新对话",
+      "newConversation": "新建对话",
       "empty": "暂无历史记录",
       "startNew": "开始新对话",
       "titlePlaceholder": "输入标题...",
+      "group": {
+        "last7Days": "最近 7 天",
+        "last30Days": "最近 30 天"
+      },
+      "rename": "重命名",
+      "delete": "删除",
       "export": {
         "createdAt": "创建时间",
         "user": "用户",
@@ -256,11 +263,12 @@
   "assistant": {
     "selector": {
       "title": "选择一个助手开始对话",
+      "heroTitlePrefix": "使用",
+      "heroTitleSuffix": "开始对话",
       "subtitle": "每个助手擅长不同类型的分析任务，选择最适合你需求的助手",
       "noAssistants": "当前场景暂无可用助手",
       "manage": "管理助手",
-      "addNew": "新增助手",
-      "rememberSelection": "7天内记住此选择"
+      "addNew": "新增助手"
     },
     "config": {
       "viewTitle": "查看配置",

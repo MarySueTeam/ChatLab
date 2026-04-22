@@ -36,7 +36,7 @@ const visibleCount = ref(0)
 let resizeObserver: ResizeObserver | null = null
 
 const chipClass =
-  'rounded-full border border-gray-200 bg-white px-2.5 py-1 text-[11px] leading-4 text-gray-600 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-600 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-primary-600 dark:hover:bg-primary-950/30 dark:hover:text-primary-400'
+  'rounded-full ring-1 ring-inset ring-gray-200/80 bg-white/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] backdrop-blur-md px-3 py-1.5 text-xs text-gray-600 transition-all duration-300 hover:-translate-y-[1px] hover:ring-primary-300 hover:bg-white/90 hover:text-primary-600 hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.08)] disabled:cursor-not-allowed disabled:opacity-50 dark:ring-gray-700/60 dark:bg-gray-800/60 dark:text-gray-300 dark:hover:ring-primary-500/50 dark:hover:bg-gray-800/90 dark:hover:text-primary-400'
 
 const items = computed<PresetItem[]>(() => {
   const result: PresetItem[] = []

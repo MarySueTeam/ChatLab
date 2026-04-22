@@ -174,9 +174,16 @@
     "conversation": {
       "title": "AI 對話紀錄",
       "newChat": "新對話",
+      "newConversation": "新建對話",
       "empty": "暫無歷史紀錄",
       "startNew": "開始新對話",
       "titlePlaceholder": "輸入標題...",
+      "group": {
+        "last7Days": "最近 7 天",
+        "last30Days": "最近 30 天"
+      },
+      "rename": "重新命名",
+      "delete": "刪除",
       "export": {
         "createdAt": "建立時間",
         "user": "使用者",
@@ -256,11 +263,12 @@
   "assistant": {
     "selector": {
       "title": "選擇一個助手開始對話",
+      "heroTitlePrefix": "使用",
+      "heroTitleSuffix": "開始對話",
       "subtitle": "每位助手都擅長不同分析任務，請選擇最符合需求的一位",
       "noAssistants": "當前場景暫無可用助手",
       "manage": "管理助手",
-      "addNew": "新增助手",
-      "rememberSelection": "7天內記住此選擇"
+      "addNew": "新增助手"
     },
     "config": {
       "viewTitle": "檢視設定",

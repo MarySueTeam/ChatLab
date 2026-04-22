@@ -85,7 +85,12 @@ export const apiServerApi = {
     return ipcRenderer.invoke('api:getDataSources')
   },
 
-  addDataSource: (partial: { name?: string; baseUrl: string; token: string; intervalMinutes: number }): Promise<DataSource> => {
+  addDataSource: (partial: {
+    name?: string
+    baseUrl: string
+    token: string
+    intervalMinutes: number
+  }): Promise<DataSource> => {
     return ipcRenderer.invoke('api:addDataSource', partial)
   },
 
@@ -130,10 +135,8 @@ export const apiServerApi = {
   onPullResult: (
     callback: (data: { sourceId: string; sessionId?: string; status: string; detail: string }) => void
   ): (() => void) => {
-    const handler = (
-      _event: any,
-      data: { sourceId: string; sessionId?: string; status: string; detail: string }
-    ) => callback(data)
+    const handler = (_event: any, data: { sourceId: string; sessionId?: string; status: string; detail: string }) =>
+      callback(data)
     ipcRenderer.on('api:pullResult', handler)
     return () => ipcRenderer.removeListener('api:pullResult', handler)
   },

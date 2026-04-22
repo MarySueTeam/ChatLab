@@ -174,9 +174,16 @@
     "conversation": {
       "title": "AI チャット履歴",
       "newChat": "新規チャット",
+      "newConversation": "新規チャット",
       "empty": "履歴はありません",
       "startNew": "新しいチャットを始める",
       "titlePlaceholder": "タイトルを入力...",
+      "group": {
+        "last7Days": "過去 7 日間",
+        "last30Days": "過去 30 日間"
+      },
+      "rename": "名前を変更",
+      "delete": "削除",
       "export": {
         "createdAt": "作成日時",
         "user": "ユーザー",
@@ -256,11 +263,12 @@
   "assistant": {
     "selector": {
       "title": "アシスタントを選んでチャットを始めましょう",
+      "heroTitlePrefix": "",
+      "heroTitleSuffix": "と話しかける",
       "subtitle": "各アシスタントは得意分野が異なります。目的に合うものを選んでください",
       "noAssistants": "現在のシーンで利用可能なアシスタントはありません",
       "manage": "アシスタント管理",
-      "addNew": "アシスタントを追加",
-      "rememberSelection": "この選択を7日間記憶する"
+      "addNew": "アシスタントを追加"
     },
     "config": {
       "viewTitle": "設定を確認",

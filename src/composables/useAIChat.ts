@@ -46,7 +46,7 @@ export function useAIChat(
     locale,
   })
 
-  // 每次进入 AI Tab 时重置到助手选择页（从浮动任务条返回时除外）
+  // 每次进入 AI Tab 时确保默认选中助手（从浮动任务条返回时除外）
   void aiChatStore.resetToSelectorOnEnter(chatKey)
 
   // 当前可见的 AI 页应恢复自己的助手上下文，避免不同会话之间串助手选择。
@@ -58,7 +58,6 @@ export function useAIChat(
     currentKeywords: toRef(state, 'currentKeywords'),
     isLoadingSource: toRef(state, 'isLoadingSource'),
     isAIThinking: toRef(state, 'isAIThinking'),
-    showAssistantSelector: toRef(state, 'showAssistantSelector'),
     currentConversationId: toRef(state, 'currentConversationId'),
     currentToolStatus: toRef(state, 'currentToolStatus'),
     toolsUsedInCurrentRound: toRef(state, 'toolsUsedInCurrentRound'),
@@ -73,6 +72,5 @@ export function useAIChat(
     updateMaxMessages: () => aiChatStore.updateMaxMessages(),
     stopGeneration: () => aiChatStore.stopGeneration(chatKey),
     selectAssistantForSession: (assistantId: string) => aiChatStore.selectAssistantForSession(chatKey, assistantId),
-    clearAssistantForSession: () => aiChatStore.clearAssistantForSession(chatKey),
   }
 }

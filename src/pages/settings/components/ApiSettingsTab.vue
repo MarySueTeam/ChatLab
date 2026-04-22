@@ -210,12 +210,18 @@ function subscribedRemoteIds(ds: DataSource): Set<string> {
                   class="rounded-lg border border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-800"
                 >
                   <!-- Source header -->
-                  <div class="flex items-center justify-between border-b border-gray-100 px-3 py-2 dark:border-gray-700">
+                  <div
+                    class="flex items-center justify-between border-b border-gray-100 px-3 py-2 dark:border-gray-700"
+                  >
                     <div class="flex items-center gap-2">
                       <UIcon name="i-heroicons-server-stack" class="h-3.5 w-3.5 text-gray-500 dark:text-gray-400" />
-                      <span v-if="ds.name" class="text-xs font-medium text-gray-700 dark:text-gray-300">{{ ds.name }}</span>
+                      <span v-if="ds.name" class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                        {{ ds.name }}
+                      </span>
                       <span class="text-xs font-mono text-gray-500 dark:text-gray-400">{{ ds.baseUrl }}</span>
-                      <span v-if="!ds.enabled" class="text-xs text-gray-400">({{ t('settings.api.dataSources.disabled') }})</span>
+                      <span v-if="!ds.enabled" class="text-xs text-gray-400">
+                        ({{ t('settings.api.dataSources.disabled') }})
+                      </span>
                     </div>
                     <div class="flex items-center gap-1">
                       <UButton size="xs" variant="ghost" @click="openEditSource(ds)">
@@ -450,11 +456,7 @@ function subscribedRemoteIds(ds: DataSource): Set<string> {
     <DataSourceAddModal v-model:open="showAddModal" @source-added="store.fetchDataSources()" />
 
     <!-- Edit data source modal -->
-    <DataSourceEditModal
-      v-model:open="showEditModal"
-      :data-source="editingDataSource"
-      @saved="handleEditSaved"
-    />
+    <DataSourceEditModal v-model:open="showEditModal" :data-source="editingDataSource" @saved="handleEditSaved" />
 
     <!-- Manage import sessions modal -->
     <DataSourceAddModal

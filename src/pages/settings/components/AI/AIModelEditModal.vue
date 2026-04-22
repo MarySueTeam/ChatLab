@@ -188,16 +188,18 @@ function closeModal() {
                 <div class="mt-2 flex items-center gap-2">
                   <button
                     v-if="currentProviderDef?.supportsCustomModels"
-                    class="text-xs text-primary-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-xs text-gray-500 transition-colors hover:border-primary-400 hover:text-primary-500 dark:border-gray-600 dark:text-gray-400 dark:hover:border-primary-500 dark:hover:text-primary-400"
                     @click="openAddModelDialog"
                   >
-                    + {{ t('settings.aiConfig.modal.addCustomModel') }}
+                    <UIcon name="i-heroicons-plus" class="h-3.5 w-3.5" />
+                    {{ t('settings.aiConfig.modal.addCustomModel') }}
                   </button>
                   <button
                     v-if="selectedModelIsCustom"
-                    class="text-xs text-red-400 hover:text-red-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-red-200 px-2 py-1 text-xs text-red-400 transition-colors hover:border-red-400 hover:text-red-500 dark:border-red-800 dark:hover:border-red-500"
                     @click="deleteCustomModel(formData.model)"
                   >
+                    <UIcon name="i-heroicons-trash" class="h-3.5 w-3.5" />
                     {{ t('settings.aiConfig.modal.deleteCustomModel') }}
                   </button>
                 </div>
@@ -245,16 +247,18 @@ function closeModal() {
                 <div class="mt-2 flex items-center gap-2">
                   <button
                     v-if="currentProviderDef?.supportsCustomModels"
-                    class="text-xs text-primary-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-xs text-gray-500 transition-colors hover:border-primary-400 hover:text-primary-500 dark:border-gray-600 dark:text-gray-400 dark:hover:border-primary-500 dark:hover:text-primary-400"
                     @click="openAddModelDialog"
                   >
-                    + {{ t('settings.aiConfig.modal.addCustomModel') }}
+                    <UIcon name="i-heroicons-plus" class="h-3.5 w-3.5" />
+                    {{ t('settings.aiConfig.modal.addCustomModel') }}
                   </button>
                   <button
                     v-if="selectedModelIsCustom"
-                    class="text-xs text-red-400 hover:text-red-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-red-200 px-2 py-1 text-xs text-red-400 transition-colors hover:border-red-400 hover:text-red-500 dark:border-red-800 dark:hover:border-red-500"
                     @click="deleteCustomModel(formData.model)"
                   >
+                    <UIcon name="i-heroicons-trash" class="h-3.5 w-3.5" />
                     {{ t('settings.aiConfig.modal.deleteCustomModel') }}
                   </button>
                 </div>
@@ -326,16 +330,18 @@ function closeModal() {
                 <div class="mt-2 flex items-center gap-2">
                   <button
                     v-if="currentProviderDef?.supportsCustomModels"
-                    class="text-xs text-primary-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-gray-300 px-2 py-1 text-xs text-gray-500 transition-colors hover:border-primary-400 hover:text-primary-500 dark:border-gray-600 dark:text-gray-400 dark:hover:border-primary-500 dark:hover:text-primary-400"
                     @click="openAddModelDialog"
                   >
-                    + {{ t('settings.aiConfig.modal.addCustomModel') }}
+                    <UIcon name="i-heroicons-plus" class="h-3.5 w-3.5" />
+                    {{ t('settings.aiConfig.modal.addCustomModel') }}
                   </button>
                   <button
                     v-if="selectedModelIsCustom"
-                    class="text-xs text-red-400 hover:text-red-500 hover:underline"
+                    class="flex items-center gap-1 rounded-md border border-dashed border-red-200 px-2 py-1 text-xs text-red-400 transition-colors hover:border-red-400 hover:text-red-500 dark:border-red-800 dark:hover:border-red-500"
                     @click="deleteCustomModel(formData.model)"
                   >
+                    <UIcon name="i-heroicons-trash" class="h-3.5 w-3.5" />
                     {{ t('settings.aiConfig.modal.deleteCustomModel') }}
                   </button>
                 </div>
