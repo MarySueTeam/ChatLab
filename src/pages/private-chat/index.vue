@@ -54,7 +54,7 @@ const tabs = [
   { id: 'overview', labelKey: 'analysis.tabs.overview', icon: 'i-heroicons-chart-pie' },
   { id: 'view', labelKey: 'analysis.tabs.view', icon: 'i-heroicons-presentation-chart-bar' },
   { id: 'ai-chat', labelKey: 'analysis.tabs.aiChat', icon: 'i-heroicons-chat-bubble-left-ellipsis' },
-  { id: 'memory', labelKey: 'analysis.tabs.memory', icon: 'i-heroicons-light-bulb' },
+  // { id: 'memory', labelKey: 'analysis.tabs.memory', icon: 'i-heroicons-light-bulb' },
   { id: 'lab', labelKey: 'analysis.tabs.lab', icon: 'i-heroicons-beaker' },
 ]
 
