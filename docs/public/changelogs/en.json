@@ -1,5 +1,33 @@
 [
   {
+    "version": "0.19.0",
+    "date": "2026-05-06",
+    "summary": "This update adds AI context auto-compression, introduces demo data for new users, and improves model configuration and debugging.",
+    "changes": [
+      {
+        "type": "feat",
+        "items": [
+          "Add model context window presets and custom configuration.",
+          "Add AI chat context auto-compression and related settings.",
+          "Improve the context compression flow and status display.",
+          "Add raw data viewing in debug mode and record full LLM context.",
+          "Improve AI model configuration copy, forms, and settings displays.",
+          "Remove vector model configuration to simplify related settings.",
+          "Let new users try demo data directly from the empty state.",
+          "Migrate the project structure to pnpm workspace."
+        ]
+      },
+      {
+        "type": "fix",
+        "items": [
+          "Fix the fast model follow-assistant mode using the wrong model in some cases.",
+          "Fix the demo button not appearing in the empty data state.",
+          "Fix a startup risk caused by undeclared axios imports in the main process."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.18.4",
     "date": "2026-04-29",
     "summary": "This update optimizes model stability, supports fetching remote model lists, improves AI error detail presentation, and refines some styles.",
