@@ -6,3 +6,4 @@
  */
 
 export { BetterSqliteAdapter, openBetterSqliteDatabase } from './better-sqlite3-adapter'
+export { NodePathProvider } from './node-path-provider'
