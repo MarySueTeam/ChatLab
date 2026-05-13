@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { LaughAnalysis, KeywordTemplate as BaseKeywordTemplate } from '@/types/analysis'
+import { getAdapter } from '@/adapters'
 import { ListPro } from '@/components/charts'
 import type { RankItem } from '@/components/charts'
 import { LoadingState } from '@/components/UI'
@@ -304,9 +305,7 @@ async function loadAnalysis() {
 
   isLoading.value = true
   try {
-    analysis.value = await window.chatApi.getLaughAnalysis(props.sessionId, props.timeFilter, [
-      ...currentKeywords.value,
-    ])
+    analysis.value = await getAdapter().getLaughAnalysis(props.sessionId, props.timeFilter, [...currentKeywords.value])
   } catch (error) {
     console.error('加载词频分析失败:', error)
     analysis.value = null

@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
 import { formatDateRange } from '@/utils'
+import { getAdapter } from '@/adapters'
 import UITabs from '@/components/UI/Tabs.vue'
 import DatePicker from '@/components/UI/DatePicker.vue'
 
@@ -378,9 +379,10 @@ async function loadData() {
   }
 
   try {
+    const adapter = getAdapter()
     const [years, range] = await Promise.all([
-      window.chatApi.getAvailableYears(props.sessionId),
-      window.chatApi.getTimeRange(props.sessionId),
+      adapter.getAvailableYears(props.sessionId),
+      adapter.getTimeRange(props.sessionId),
     ])
     availableYears.value = years
     fullTimeRange.value = range

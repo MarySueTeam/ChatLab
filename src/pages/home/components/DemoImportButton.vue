@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
 import { getChatlabSiteLocalePath } from '@/utils/chatlabSiteLocale'
+import { getAdapter } from '@/adapters'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -16,7 +17,7 @@ const stage = ref<'downloading' | 'importing'>('downloading')
 const error = ref<string | null>(null)
 
 async function navigateToSession(sessionId: string) {
-  const session = await window.chatApi.getSession(sessionId)
+  const session = await getAdapter().getSession(sessionId)
   if (session) {
     const routeName = session.type === 'private' ? 'private-chat' : 'group-chat'
     router.push({ name: routeName, params: { id: sessionId } })

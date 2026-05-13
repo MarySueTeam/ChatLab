@@ -5,6 +5,7 @@
  */
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { getAdapter } from '@/adapters'
 
 const { t } = useI18n()
 
@@ -61,7 +62,7 @@ async function loadSessionIndexStatus() {
   isLoadingSessionStatus.value = true
   try {
     // 获取所有会话
-    const sessions = await window.chatApi.getSessions()
+    const sessions = await getAdapter().getSessions()
 
     // 获取每个会话的索引状态
     const statusList: SessionIndexStatus[] = []

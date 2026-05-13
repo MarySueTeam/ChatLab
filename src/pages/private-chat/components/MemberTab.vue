@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MemberWithStats } from '@/types/analysis'
 import OwnerSelector from '@/components/analysis/member/OwnerSelector.vue'
+import { getAdapter } from '@/adapters'
 
 const { t } = useI18n()
 
@@ -71,7 +72,7 @@ async function loadMembers() {
   if (!props.sessionId) return
   isLoading.value = true
   try {
-    members.value = await window.chatApi.getMembers(props.sessionId)
+    members.value = await getAdapter().getMembers(props.sessionId)
   } catch (error) {
     console.error('加载成员列表失败:', error)
   } finally {
@@ -89,7 +90,7 @@ async function updateAliases(member: MemberWithStats, newAliases: string[]) {
 
   savingAliasesId.value = member.id
   try {
-    const success = await window.chatApi.updateMemberAliases(props.sessionId, member.id, aliasesToSave)
+    const success = await getAdapter().updateMemberAliases(props.sessionId, member.id, aliasesToSave)
     if (success) {
       const idx = members.value.findIndex((m) => m.id === member.id)
       if (idx !== -1) {
@@ -129,7 +130,7 @@ async function confirmMerge() {
   if (!mergePlan.value) return
   isMerging.value = true
   try {
-    const success = await window.chatApi.mergeMembers(
+    const success = await getAdapter().mergeMembers(
       props.sessionId,
       mergePlan.value.primary.id,
       mergePlan.value.secondary.id

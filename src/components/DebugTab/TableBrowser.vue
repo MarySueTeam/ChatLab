@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { TableSchema, SQLResult } from '@/components/analysis/SQLLab'
+import { getAdapter } from '@/adapters'
 import { getColumnLabel } from '@/components/analysis/SQLLab'
 import type { LocaleType } from '@/i18n/types'
 import { UITabs } from '@/components/UI'
@@ -95,7 +96,7 @@ async function runSQL(sql: string): Promise<SQLResult> {
   if (dbSource.value === 'ai') {
     return await window.aiApi.executeAiSQL(sql)
   }
-  return await window.chatApi.executeSQL(props.sessionId, sql)
+  return await getAdapter().executeSQL(props.sessionId, sql)
 }
 
 async function loadSchema() {
@@ -103,7 +104,7 @@ async function loadSchema() {
     if (dbSource.value === 'ai') {
       schema.value = await window.aiApi.getAiSchema()
     } else {
-      schema.value = await window.chatApi.getSchema(props.sessionId)
+      schema.value = await getAdapter().getSchema(props.sessionId)
     }
     if (sortedSchema.value.length > 0) {
       const defaultTable = isAiDb.value ? 'ai_message' : sortedSchema.value[0].name

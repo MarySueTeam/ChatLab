@@ -10,6 +10,7 @@ import { storeToRefs } from 'pinia'
 import { usePromptStore } from '@/stores/prompt'
 import { useSessionStore } from '@/stores/session'
 import { useSettingsStore } from '@/stores/settings'
+import { getAdapter } from '@/adapters'
 import { useAssistantStore } from '@/stores/assistant'
 import { useSkillStore } from '@/stores/skill'
 import type { TokenUsage, AgentRuntimeStatus, SerializedErrorInfo } from '@electron/shared/types'
@@ -348,7 +349,7 @@ export const useAIChatStore = defineStore('aiChatRuntime', () => {
     }
 
     try {
-      const members = await window.chatApi.getMembers(state.sessionId)
+      const members = await getAdapter().getMembers(state.sessionId)
       const ownerMember = members.find((member) => member.platformId === ownerId)
       state.ownerInfo = ownerMember
         ? {

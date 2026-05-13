@@ -2,6 +2,7 @@
 import { ref, watch, computed, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { CatchphraseAnalysis } from '@/types/analysis'
+import { getAdapter } from '@/adapters'
 const EChartWordcloud = defineAsyncComponent(() => import('@/components/charts/EChartWordcloud.vue'))
 import type { EChartWordcloudData } from '@/components/charts'
 import { LoadingState, EmptyState, UITabs } from '@/components/UI'
@@ -96,7 +97,7 @@ async function loadCatchphraseAnalysis() {
   if (!props.sessionId) return
   isLoading.value = true
   try {
-    catchphraseAnalysis.value = await window.chatApi.getCatchphraseAnalysis(props.sessionId, props.timeFilter)
+    catchphraseAnalysis.value = await getAdapter().getCatchphraseAnalysis(props.sessionId, props.timeFilter)
     console.log(
       '[CatchphraseTab] API result: members:',
       catchphraseAnalysis.value?.members.length,

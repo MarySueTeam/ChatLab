@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getChatlabSiteLocalePath } from '@/utils/chatlabSiteLocale'
 import { useSessionStore, type BatchFileInfo, type MergeFileInfo } from '@/stores/session'
+import { getAdapter } from '@/adapters'
 import DemoImportButton from './DemoImportButton.vue'
 
 const { t } = useI18n()
@@ -102,7 +103,7 @@ function translateError(error: string): string {
 
 // 根据会话类型导航到对应页面
 async function navigateToSession(sessionId: string) {
-  const session = await window.chatApi.getSession(sessionId)
+  const session = await getAdapter().getSession(sessionId)
   if (session) {
     const routeName = session.type === 'private' ? 'private-chat' : 'group-chat'
     router.push({ name: routeName, params: { id: sessionId } })

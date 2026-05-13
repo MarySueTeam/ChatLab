@@ -13,6 +13,7 @@ import { useSessionStore } from '@/stores/session'
 import { useLayoutStore } from '@/stores/layout'
 import { useSettingsStore } from '@/stores/settings'
 import { useLLMStore } from '@/stores/llm'
+import { initAdapter } from '@/adapters'
 
 const { t } = useI18n()
 
@@ -58,6 +59,8 @@ onMounted(async () => {
 
   // 初始化语言设置（同步 i18n 和 dayjs，异步加载脱敏规则）
   await settingsStore.initLocale()
+  // 初始化数据访问适配器（Electron / Web 自动选择）
+  await initAdapter()
   // 初始化 LLM 配置（预加载，避免首次使用时延迟）
   llmStore.init()
   // 从数据库加载会话列表

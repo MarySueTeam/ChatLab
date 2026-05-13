@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { AnalysisSession, ImportProgress, ChatType } from '@/types/base'
+import { getAdapter } from '@/adapters'
 
 /** 侧边栏筛选类型 */
 export type SessionFilterType = 'all' | ChatType
@@ -160,7 +161,7 @@ export const useSessionStore = defineStore(
      */
     async function loadSessions() {
       try {
-        const list = await window.chatApi.getSessions()
+        const list = await getAdapter().getSessions()
         sessions.value = list
         // 如果当前选中的会话不存在了，清除选中状态
         if (currentSessionId.value && !list.find((s) => s.id === currentSessionId.value)) {
@@ -639,7 +640,7 @@ export const useSessionStore = defineStore(
      */
     async function deleteSession(id: string): Promise<boolean> {
       try {
-        const success = await window.chatApi.deleteSession(id)
+        const success = await getAdapter().deleteSession(id)
         if (success) {
           const index = sessions.value.findIndex((s) => s.id === id)
           if (index !== -1) {
@@ -662,7 +663,7 @@ export const useSessionStore = defineStore(
      */
     async function renameSession(id: string, newName: string): Promise<boolean> {
       try {
-        const success = await window.chatApi.renameSession(id, newName)
+        const success = await getAdapter().renameSession(id, newName)
         if (success) {
           const session = sessions.value.find((s) => s.id === id)
           if (session) {
@@ -688,7 +689,7 @@ export const useSessionStore = defineStore(
      */
     async function updateSessionOwnerId(id: string, ownerId: string | null): Promise<boolean> {
       try {
-        const success = await window.chatApi.updateSessionOwnerId(id, ownerId)
+        const success = await getAdapter().updateSessionOwnerId(id, ownerId)
         if (success) {
           const session = sessions.value.find((s) => s.id === id)
           if (session) {

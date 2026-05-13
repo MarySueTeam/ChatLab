@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { RelationshipStats, RelationshipMonthStats } from '@/types/analysis'
+import { getAdapter } from '@/adapters'
 import { ThemeCard, SectionCard, EmptyState, LoadingState } from '@/components/UI'
 import { EChart } from '@/components/charts'
 import RelationshipMetricCard from './RelationshipMetricCard.vue'
@@ -31,7 +32,7 @@ async function loadData(options?: { localOnly?: 'perseverance' }) {
     isLoading.value = true
   }
   try {
-    stats.value = await window.chatApi.getRelationshipStats(props.sessionId, props.timeFilter, {
+    stats.value = await getAdapter().getRelationshipStats(props.sessionId, props.timeFilter, {
       perseveranceThreshold: perseveranceThreshold.value,
     })
   } catch (error) {

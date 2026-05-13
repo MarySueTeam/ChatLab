@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MemberWithStats } from '@/types/analysis'
+import { getAdapter } from '@/adapters'
 
 const { t } = useI18n()
 
@@ -53,7 +54,7 @@ async function loadMembers() {
   if (!props.sessionId) return
   isLoading.value = true
   try {
-    const result = await window.chatApi.getMembers(props.sessionId)
+    const result = await getAdapter().getMembers(props.sessionId)
     // 按消息数排序
     members.value = result.sort((a, b) => b.messageCount - a.messageCount)
   } catch (error) {

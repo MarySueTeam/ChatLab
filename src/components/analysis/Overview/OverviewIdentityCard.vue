@@ -2,6 +2,7 @@
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useDark } from '@vueuse/core'
+import { getAdapter } from '@/adapters'
 import * as echarts from 'echarts/core'
 import { HeatmapChart, CustomChart } from 'echarts/charts'
 import { CalendarComponent, TooltipComponent, VisualMapComponent } from 'echarts/components'
@@ -37,7 +38,7 @@ const weekdayActivity = ref<WeekdayActivity[]>([])
 async function loadWeekdayActivity() {
   if (!props.session.id) return
   try {
-    weekdayActivity.value = await window.chatApi.getWeekdayActivity(props.session.id, props.timeFilter)
+    weekdayActivity.value = await getAdapter().getWeekdayActivity(props.session.id, props.timeFilter)
   } catch (error) {
     console.error('加载星期活跃度失败:', error)
   }
