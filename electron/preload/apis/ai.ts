@@ -9,6 +9,7 @@ import type { ExportProgress } from '../../../src/types/base'
 // AI API 类型
 export interface SearchMessageResult {
   id: number
+  senderId: number
   senderName: string
   senderPlatformId: string
   senderAliases: string[]
@@ -16,6 +17,9 @@ export interface SearchMessageResult {
   content: string
   timestamp: number
   type: number
+  replyToMessageId: string | null
+  replyToContent: string | null
+  replyToSenderName: string | null
 }
 
 export interface AIConversation {

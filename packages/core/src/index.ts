@@ -61,10 +61,19 @@ export {
   FULL_MSG_COLUMNS,
   FULL_MSG_FROM,
   FULL_MSG_SELECT,
+  MSG_COUNT_FROM,
   SYSTEM_MSG_FILTER,
   TEXT_ONLY_FILTER,
   mapMessageRow,
   buildMsgConditions,
+  fetchMessagesBefore,
+  fetchMessagesAfter,
+  searchMessagesLikeAsync,
+  fetchMessageContext,
+  fetchSearchMessageContext,
+  fetchAllRecentMessages,
+  fetchRecentTextMessages,
+  fetchConversationBetween,
 } from './query'
 
 // 查询类型
@@ -117,6 +126,10 @@ export type {
   FullMessageRow,
   MappedMessage,
   MsgQueryConditions,
+  AsyncSqlExecutor,
+  AsyncPaginatedMessages,
+  AsyncMessagesWithTotal,
+  AsyncConversationData,
 } from './query'
 
 // NLP（平台无关的类型、数据和工具函数）

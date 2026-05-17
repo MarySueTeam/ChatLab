@@ -30,6 +30,8 @@ export const FULL_MSG_FROM = `
 
 export const FULL_MSG_SELECT = `SELECT ${FULL_MSG_COLUMNS} ${FULL_MSG_FROM}`
 
+export const MSG_COUNT_FROM = `FROM message msg JOIN member m ON msg.sender_id = m.id`
+
 export const SYSTEM_MSG_FILTER = "COALESCE(m.account_name, '') != '系统消息'"
 export const TEXT_ONLY_FILTER = "msg.type = 0 AND msg.content IS NOT NULL AND msg.content != ''"
 
@@ -103,7 +105,10 @@ export function buildMsgConditions(options?: {
   startTs?: number
   endTs?: number
   senderId?: number
+  memberId?: number | null
   keywords?: string[]
+  systemFilter?: boolean
+  textOnlyFilter?: boolean
 }): MsgQueryConditions {
   const conds: string[] = []
   const params: unknown[] = []
@@ -120,10 +125,20 @@ export function buildMsgConditions(options?: {
     conds.push('msg.sender_id = ?')
     params.push(options.senderId)
   }
+  if (options?.memberId != null) {
+    conds.push('msg.sender_id = ?')
+    params.push(options.memberId)
+  }
   if (options?.keywords && options.keywords.length > 0) {
     const kwConds = options.keywords.map(() => 'msg.content LIKE ?')
     conds.push(`(${kwConds.join(' OR ')})`)
     params.push(...options.keywords.map((k) => `%${k}%`))
+  }
+  if (options?.systemFilter) {
+    conds.push(SYSTEM_MSG_FILTER)
+  }
+  if (options?.textOnlyFilter) {
+    conds.push(TEXT_ONLY_FILTER)
   }
 
   return {

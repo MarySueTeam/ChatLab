@@ -1,11 +1,18 @@
 /**
- * FetchMessageAdapter — Web (CLI serve) 模式消息查询实现
+ * FetchMessageAdapter — Web (CLI serve) message query implementation
  *
- * 通过 pluginQuery 构建 SQL 查询来实现消息检索。
- * SQL 模板和行映射来自 @openchatlab/core 的共享模块。
+ * Delegates to shared async query functions from @openchatlab/core,
+ * using a pluginQuery-based AsyncSqlExecutor.
  */
 
-import { FULL_MSG_SELECT, buildMsgConditions, mapMessageRow, type FullMessageRow } from '@openchatlab/core'
+import type { AsyncSqlExecutor } from '@openchatlab/core'
+import {
+  fetchMessagesBefore,
+  fetchMessagesAfter,
+  fetchMessageContext,
+  searchMessagesLikeAsync,
+  fetchAllRecentMessages,
+} from '@openchatlab/core'
 import type { MessageAdapter, TimeFilter, PaginatedMessages, MessageRecord, SearchResult } from './types'
 import { getRegisteredAdapter } from '../registry'
 import type { DataAdapter } from '../data/types'
@@ -14,17 +21,17 @@ function getDataAdapter(): DataAdapter {
   return getRegisteredAdapter<DataAdapter>('data')
 }
 
-function pq<T>(sessionId: string, sql: string, params: unknown[] = []) {
-  return getDataAdapter().pluginQuery<T>(sessionId, sql, params)
-}
-
-function toConditions(filter?: TimeFilter, senderId?: number, keywords?: string[]) {
-  return buildMsgConditions({
-    startTs: filter?.startTs,
-    endTs: filter?.endTs,
-    senderId,
-    keywords,
-  })
+function createPluginQueryExecutor(sessionId: string): AsyncSqlExecutor {
+  const adapter = getDataAdapter()
+  return {
+    all<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+      return adapter.pluginQuery<T>(sessionId, sql, params)
+    },
+    async get<T>(sql: string, params: unknown[] = []): Promise<T | undefined> {
+      const rows = await adapter.pluginQuery<T>(sessionId, sql, params)
+      return rows[0]
+    },
+  }
 }
 
 export class FetchMessageAdapter implements MessageAdapter {
@@ -36,12 +43,8 @@ export class FetchMessageAdapter implements MessageAdapter {
     senderId?: number,
     keywords?: string[]
   ): Promise<PaginatedMessages> {
-    const { clause, params } = toConditions(filter, senderId, keywords)
-    const sql = `${FULL_MSG_SELECT} WHERE msg.id < ? ${clause} ORDER BY msg.id DESC LIMIT ?`
-    const rows = await pq<FullMessageRow>(sessionId, sql, [beforeId, ...params, limit + 1])
-    const hasMore = rows.length > limit
-    const sliced = hasMore ? rows.slice(0, limit) : rows
-    return { messages: sliced.map(mapMessageRow).reverse(), hasMore }
+    const executor = createPluginQueryExecutor(sessionId)
+    return fetchMessagesBefore(executor, beforeId, limit, filter, senderId, keywords)
   }
 
   async getMessagesAfter(
@@ -52,12 +55,8 @@ export class FetchMessageAdapter implements MessageAdapter {
     senderId?: number,
     keywords?: string[]
   ): Promise<PaginatedMessages> {
-    const { clause, params } = toConditions(filter, senderId, keywords)
-    const sql = `${FULL_MSG_SELECT} WHERE msg.id > ? ${clause} ORDER BY msg.id ASC LIMIT ?`
-    const rows = await pq<FullMessageRow>(sessionId, sql, [afterId, ...params, limit + 1])
-    const hasMore = rows.length > limit
-    const sliced = hasMore ? rows.slice(0, limit) : rows
-    return { messages: sliced.map(mapMessageRow), hasMore }
+    const executor = createPluginQueryExecutor(sessionId)
+    return fetchMessagesAfter(executor, afterId, limit, filter, senderId, keywords)
   }
 
   async getMessageContext(
@@ -65,35 +64,8 @@ export class FetchMessageAdapter implements MessageAdapter {
     messageIds: number | number[],
     contextSize: number = 20
   ): Promise<MessageRecord[]> {
-    const ids = Array.isArray(messageIds) ? messageIds : [messageIds]
-    if (ids.length === 0) return []
-
-    const allIds = new Set<number>()
-
-    for (const id of ids) {
-      allIds.add(id)
-      if (contextSize > 0) {
-        const before = await pq<{ id: number }>(
-          sessionId,
-          'SELECT id FROM message WHERE id < ? ORDER BY id DESC LIMIT ?',
-          [id, contextSize]
-        )
-        before.forEach((r) => allIds.add(r.id))
-
-        const after = await pq<{ id: number }>(
-          sessionId,
-          'SELECT id FROM message WHERE id > ? ORDER BY id ASC LIMIT ?',
-          [id, contextSize]
-        )
-        after.forEach((r) => allIds.add(r.id))
-      }
-    }
-
-    const idList = Array.from(allIds).sort((a, b) => a - b)
-    const placeholders = idList.map(() => '?').join(', ')
-    const sql = `${FULL_MSG_SELECT} WHERE msg.id IN (${placeholders}) ORDER BY msg.id ASC`
-    const rows = await pq<FullMessageRow>(sessionId, sql, idList)
-    return rows.map(mapMessageRow)
+    const executor = createPluginQueryExecutor(sessionId)
+    return fetchMessageContext(executor, messageIds, contextSize)
   }
 
   async searchMessages(
@@ -104,24 +76,12 @@ export class FetchMessageAdapter implements MessageAdapter {
     offset: number = 0,
     senderId?: number
   ): Promise<SearchResult> {
-    const { clause, params } = toConditions(filter, senderId, keywords)
-    const countSql = `SELECT COUNT(*) as total FROM message msg JOIN member m ON msg.sender_id = m.id WHERE 1=1 ${clause}`
-    const countResult = await pq<{ total: number }>(sessionId, countSql, params)
-    const total = countResult[0]?.total ?? 0
-
-    const sql = `${FULL_MSG_SELECT} WHERE 1=1 ${clause} ORDER BY msg.ts DESC LIMIT ? OFFSET ?`
-    const rows = await pq<FullMessageRow>(sessionId, sql, [...params, limit, offset])
-    return { messages: rows.map(mapMessageRow), total }
+    const executor = createPluginQueryExecutor(sessionId)
+    return searchMessagesLikeAsync(executor, keywords, filter, limit, offset, senderId)
   }
 
   async getAllRecentMessages(sessionId: string, filter?: TimeFilter, limit: number = 100): Promise<SearchResult> {
-    const { clause, params } = toConditions(filter)
-    const countSql = `SELECT COUNT(*) as total FROM message msg JOIN member m ON msg.sender_id = m.id WHERE 1=1 ${clause}`
-    const countResult = await pq<{ total: number }>(sessionId, countSql, params)
-    const total = countResult[0]?.total ?? 0
-
-    const sql = `${FULL_MSG_SELECT} WHERE 1=1 ${clause} ORDER BY msg.ts DESC LIMIT ?`
-    const rows = await pq<FullMessageRow>(sessionId, sql, [...params, limit])
-    return { messages: rows.map(mapMessageRow).reverse(), total }
+    const executor = createPluginQueryExecutor(sessionId)
+    return fetchAllRecentMessages(executor, filter, limit)
   }
 }

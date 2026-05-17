@@ -74,12 +74,29 @@ export {
   FULL_MSG_COLUMNS,
   FULL_MSG_FROM,
   FULL_MSG_SELECT,
+  MSG_COUNT_FROM,
   SYSTEM_MSG_FILTER,
   TEXT_ONLY_FILTER,
   mapMessageRow,
   buildMsgConditions,
 } from './message-sql'
 export type { FullMessageRow, MappedMessage, MsgQueryConditions } from './message-sql'
+
+// Async SQL executor abstraction
+export type { AsyncSqlExecutor } from './executor'
+
+// Shared async message query functions (platform-agnostic)
+export {
+  fetchMessagesBefore,
+  fetchMessagesAfter,
+  searchMessagesLikeAsync,
+  fetchMessageContext,
+  fetchSearchMessageContext,
+  fetchAllRecentMessages,
+  fetchRecentTextMessages,
+  fetchConversationBetween,
+} from './message-query-functions'
+export type { AsyncPaginatedMessages, AsyncMessagesWithTotal, AsyncConversationData } from './message-query-functions'
 
 // Advanced analytics
 export {

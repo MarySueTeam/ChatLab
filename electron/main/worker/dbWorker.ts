@@ -297,13 +297,13 @@ parentPort?.on('message', async (message: WorkerMessage) => {
         parentPort?.postMessage({ id, success: true, result: cached })
         return
       }
-      const result = syncHandler(payload)
+      const result = await syncHandler(payload)
       setCache(payload.sessionId, cacheKey, result, queryCacheDir)
       parentPort?.postMessage({ id, success: true, result })
       return
     }
 
-    const result = syncHandler(payload)
+    const result = await syncHandler(payload)
     parentPort?.postMessage({ id, success: true, result })
   } catch (error) {
     parentPort?.postMessage({

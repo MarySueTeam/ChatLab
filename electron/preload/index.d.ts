@@ -235,6 +235,7 @@ interface MergeApi {
 // AI 相关类型
 interface SearchMessageResult {
   id: number
+  senderId: number
   senderName: string
   senderPlatformId: string
   senderAliases: string[]
@@ -242,6 +243,9 @@ interface SearchMessageResult {
   content: string
   timestamp: number
   type: number
+  replyToMessageId: string | null
+  replyToContent: string | null
+  replyToSenderName: string | null
 }
 
 interface FilterMessage {
