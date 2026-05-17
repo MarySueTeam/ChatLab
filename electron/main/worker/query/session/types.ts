@@ -7,44 +7,8 @@
 export { DEFAULT_SESSION_GAP_THRESHOLD } from '@openchatlab/core'
 export type { ChatSessionItem, SessionIndexStats } from '@openchatlab/core'
 
-/**
- * 会话搜索结果项类型（用于 AI 工具）
- */
-export interface SessionSearchResultItem {
-  id: number
-  startTs: number
-  endTs: number
-  messageCount: number
-  /** 是否为完整会话（消息数 <= 预览条数） */
-  isComplete: boolean
-  /** 预览消息列表 */
-  previewMessages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
-}
-
-/**
- * 会话消息结果类型（用于 AI 工具）
- */
-export interface SessionMessagesResult {
-  sessionId: number
-  startTs: number
-  endTs: number
-  messageCount: number
-  returnedCount: number
-  /** 参与者列表 */
-  participants: string[]
-  /** 消息列表 */
-  messages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
-}
+// AI tool types — re-exported from core via aiTools.ts
+export type { SessionSearchResultItem, SessionMessagesResult } from './aiTools'
 
 /**
  * 自定义筛选消息类型（完整信息，兼容 MessageList 组件）

@@ -36,6 +36,8 @@ export type {
   SessionSummaryData,
   ChatSessionItem,
   SessionIndexStats,
+  SessionPreviewMessage,
+  SearchSessionsOptions,
 } from './session-queries'
 
 export {

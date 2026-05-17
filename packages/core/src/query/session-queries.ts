@@ -196,18 +196,22 @@ export interface ChatOverviewData {
   topMembers: Array<{ id: number; name: string; count: number }>
 }
 
+export interface SessionPreviewMessage {
+  id: number
+  senderId: number
+  senderName: string
+  senderPlatformId: string
+  content: string | null
+  timestamp: number
+}
+
 export interface SessionSearchItem {
   id: number
   startTs: number
   endTs: number
   messageCount: number
   isComplete: boolean
-  previewMessages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
+  previewMessages: SessionPreviewMessage[]
 }
 
 export interface SessionMessagesData {
@@ -217,12 +221,16 @@ export interface SessionMessagesData {
   messageCount: number
   returnedCount: number
   participants: string[]
-  messages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
+  messages: SessionPreviewMessage[]
+}
+
+export interface SearchSessionsOptions {
+  keywords?: string[]
+  timeFilter?: TimeFilter
+  limit?: number
+  previewCount?: number
+  /** Pre-tokenized FTS match expression. When provided, uses FTS index for keyword filtering. */
+  ftsMatchExpression?: string
 }
 
 export interface SessionSummaryData {
@@ -266,14 +274,15 @@ export function getChatOverview(db: DatabaseAdapter, topN: number = 10): ChatOve
 /**
  * Search chat sessions with optional keyword and time filters.
  * Requires chat_session and message_context tables (session indexing).
- * Uses LIKE-based keyword search (no FTS dependency).
+ * Supports LIKE-based search and optional FTS when ftsMatchExpression is provided.
  */
 export function searchSessions(
   db: DatabaseAdapter,
   keywords?: string[],
   timeFilter?: TimeFilter,
   limit: number = 20,
-  previewCount: number = 5
+  previewCount: number = 5,
+  ftsMatchExpression?: string
 ): SessionSearchItem[] {
   if (!hasTable(db, 'chat_session')) return []
 
@@ -293,16 +302,26 @@ export function searchSessions(
   }
 
   if (keywords && keywords.length > 0) {
-    const keywordConditions = keywords.map(() => 'm.content LIKE ?').join(' OR ')
-    sessionSql += `
-      AND cs.id IN (
-        SELECT DISTINCT mc.session_id FROM message_context mc
-        JOIN message m ON m.id = mc.message_id
-        WHERE (${keywordConditions})
-      )
-    `
-    for (const kw of keywords) {
-      params.push(`%${kw}%`)
+    if (ftsMatchExpression) {
+      sessionSql += `
+        AND cs.id IN (
+          SELECT DISTINCT mc.session_id FROM message_context mc
+          WHERE mc.message_id IN (SELECT rowid FROM message_fts WHERE content MATCH ?)
+        )
+      `
+      params.push(ftsMatchExpression)
+    } else {
+      const keywordConditions = keywords.map(() => 'm.content LIKE ?').join(' OR ')
+      sessionSql += `
+        AND cs.id IN (
+          SELECT DISTINCT mc.session_id FROM message_context mc
+          JOIN message m ON m.id = mc.message_id
+          WHERE (${keywordConditions})
+        )
+      `
+      for (const kw of keywords) {
+        params.push(`%${kw}%`)
+      }
     }
   }
 
@@ -317,7 +336,9 @@ export function searchSessions(
   }>
 
   const previewSql = `
-    SELECT m.id, COALESCE(mb.group_nickname, mb.account_name, mb.platform_id) as senderName,
+    SELECT m.id, mb.id as senderId,
+           COALESCE(mb.group_nickname, mb.account_name, mb.platform_id) as senderName,
+           mb.platform_id as senderPlatformId,
            m.content, m.ts as timestamp
     FROM message_context mc
     JOIN message m ON m.id = mc.message_id
@@ -326,12 +347,7 @@ export function searchSessions(
   `
 
   return sessions.map((session) => {
-    const previewMessages = db.prepare(previewSql).all(session.id, previewCount) as Array<{
-      id: number
-      senderName: string
-      content: string | null
-      timestamp: number
-    }>
+    const previewMessages = db.prepare(previewSql).all(session.id, previewCount) as unknown as SessionPreviewMessage[]
 
     return {
       id: session.id,
@@ -365,19 +381,16 @@ export function getSessionMessages(
 
   const messages = db
     .prepare(
-      `SELECT m.id, COALESCE(mb.group_nickname, mb.account_name, mb.platform_id) as senderName,
+      `SELECT m.id, mb.id as senderId,
+              COALESCE(mb.group_nickname, mb.account_name, mb.platform_id) as senderName,
+              mb.platform_id as senderPlatformId,
               m.content, m.ts as timestamp
        FROM message_context mc
        JOIN message m ON m.id = mc.message_id
        JOIN member mb ON mb.id = m.sender_id
        WHERE mc.session_id = ? ORDER BY m.ts ASC LIMIT ?`
     )
-    .all(chatSessionId, limit) as Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
+    .all(chatSessionId, limit) as unknown as SessionPreviewMessage[]
 
   const participantsSet = new Set<string>()
   for (const msg of messages) {

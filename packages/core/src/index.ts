@@ -103,6 +103,8 @@ export type {
   SessionSummaryData,
   ChatSessionItem,
   SessionIndexStats,
+  SessionPreviewMessage,
+  SearchSessionsOptions,
   MemberActivity,
   HourlyActivity,
   DailyActivity,

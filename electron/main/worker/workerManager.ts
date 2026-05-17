@@ -772,62 +772,23 @@ export async function getSessions(sessionId: string): Promise<ChatSessionItem[]>
 
 // ==================== AI 工具专用查询函数 ====================
 
-/**
- * 会话搜索结果项类型（用于 AI 工具）
- */
-export interface SessionSearchResultItem {
-  id: number
-  startTs: number
-  endTs: number
-  messageCount: number
-  isComplete: boolean
-  previewMessages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
-}
+export type { SessionSearchResultItem, SessionMessagesResult } from './query/session'
 
-/**
- * 搜索会话（用于 AI 工具）
- */
 export async function searchSessions(
   sessionId: string,
   keywords?: string[],
   timeFilter?: { startTs: number; endTs: number },
   limit?: number,
   previewCount?: number
-): Promise<SessionSearchResultItem[]> {
+): Promise<import('./query/session').SessionSearchResultItem[]> {
   return sendToWorker('searchSessions', { sessionId, keywords, timeFilter, limit, previewCount })
 }
 
-/**
- * 会话消息结果类型（用于 AI 工具）
- */
-export interface SessionMessagesResult {
-  sessionId: number
-  startTs: number
-  endTs: number
-  messageCount: number
-  returnedCount: number
-  participants: string[]
-  messages: Array<{
-    id: number
-    senderName: string
-    content: string | null
-    timestamp: number
-  }>
-}
-
-/**
- * 获取会话的完整消息（用于 AI 工具）
- */
 export async function getSessionMessages(
   sessionId: string,
   chatSessionId: number,
   limit?: number
-): Promise<SessionMessagesResult | null> {
+): Promise<import('./query/session').SessionMessagesResult | null> {
   return sendToWorker('getSessionMessages', { sessionId, chatSessionId, limit })
 }
 
