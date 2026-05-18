@@ -29,6 +29,9 @@ export {
   getSessionStats,
   updateSessionGapThreshold,
   getSessions,
+  getSessionsByTimeRange,
+  getRecentChatSessions,
+  getSessionSummariesInWorker,
   saveSessionSummary,
   getSessionSummary,
 } from './sessionIndex'

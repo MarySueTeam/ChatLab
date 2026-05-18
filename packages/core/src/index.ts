@@ -37,6 +37,8 @@ export {
   hasSessionIndex,
   getSessionIndexStats,
   getChatSessionList,
+  getSessionsByTimeRange,
+  getRecentChatSessions,
   getChatSessionSummary,
   saveChatSessionSummary,
   updateSessionGapThreshold,

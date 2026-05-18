@@ -532,6 +532,52 @@ export function getSessionIndexStats(db: DatabaseAdapter): SessionIndexStats {
 }
 
 /**
+ * Query chat sessions within a time range.
+ */
+export function getSessionsByTimeRange(db: DatabaseAdapter, startTs: number, endTs: number): ChatSessionItem[] {
+  if (!hasTable(db, 'chat_session')) return []
+  try {
+    return db
+      .prepare(
+        `SELECT
+          id, start_ts as startTs, end_ts as endTs,
+          message_count as messageCount, summary,
+          (SELECT mc.message_id FROM message_context mc
+           WHERE mc.session_id = cs.id ORDER BY mc.message_id LIMIT 1) as firstMessageId
+        FROM chat_session cs
+        WHERE start_ts >= ? AND start_ts <= ?
+        ORDER BY start_ts DESC`
+      )
+      .all(startTs, endTs) as unknown as ChatSessionItem[]
+  } catch {
+    return []
+  }
+}
+
+/**
+ * Get the most recent N chat sessions.
+ */
+export function getRecentChatSessions(db: DatabaseAdapter, limit: number): ChatSessionItem[] {
+  if (!hasTable(db, 'chat_session')) return []
+  try {
+    return db
+      .prepare(
+        `SELECT
+          id, start_ts as startTs, end_ts as endTs,
+          message_count as messageCount, summary,
+          (SELECT mc.message_id FROM message_context mc
+           WHERE mc.session_id = cs.id ORDER BY mc.message_id LIMIT 1) as firstMessageId
+        FROM chat_session cs
+        ORDER BY start_ts DESC
+        LIMIT ?`
+      )
+      .all(limit) as unknown as ChatSessionItem[]
+  } catch {
+    return []
+  }
+}
+
+/**
  * Timeline list of chat sessions with first message id and summary.
  */
 export function getChatSessionList(db: DatabaseAdapter): ChatSessionItem[] {

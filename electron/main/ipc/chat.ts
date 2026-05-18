@@ -896,53 +896,8 @@ export function registerChatHandlers(ctx: IpcContext): void {
    * 根据时间范围查询会话列表
    */
   ipcMain.handle('session:getByTimeRange', async (_, dbSessionId: string, startTs: number, endTs: number) => {
-    console.log('[session:getByTimeRange] Query params:', { dbSessionId, startTs, endTs })
-    console.log('[session:getByTimeRange] Time range:', {
-      start: new Date(startTs * 1000).toISOString(),
-      end: new Date(endTs * 1000).toISOString(),
-    })
-
     try {
-      const db = databaseCore.openDatabase(dbSessionId, true)
-      if (!db) {
-        console.log('[session:getByTimeRange] Failed to open database')
-        return []
-      }
-
-      // 先查询总数和时间范围
-      const stats = db
-        .prepare('SELECT COUNT(*) as count, MIN(start_ts) as minTs, MAX(start_ts) as maxTs FROM chat_session')
-        .get() as { count: number; minTs: number; maxTs: number }
-      console.log('[session:getByTimeRange] Database session stats:', {
-        count: stats.count,
-        minTs: stats.minTs ? new Date(stats.minTs * 1000).toISOString() : null,
-        maxTs: stats.maxTs ? new Date(stats.maxTs * 1000).toISOString() : null,
-      })
-
-      const sessions = db
-        .prepare(
-          `
-            SELECT
-              id,
-              start_ts as startTs,
-              end_ts as endTs,
-              message_count as messageCount,
-              summary
-            FROM chat_session
-            WHERE start_ts >= ? AND start_ts <= ?
-            ORDER BY start_ts DESC
-          `
-        )
-        .all(startTs, endTs) as Array<{
-        id: number
-        startTs: number
-        endTs: number
-        messageCount: number
-        summary: string | null
-      }>
-
-      console.log('[session:getByTimeRange] Query result count:', sessions.length)
-      return sessions
+      return await worker.getSessionsByTimeRange(dbSessionId, startTs, endTs)
     } catch (error) {
       console.error('Failed to query sessions by time range:', error)
       return []
@@ -953,46 +908,8 @@ export function registerChatHandlers(ctx: IpcContext): void {
    * 获取最近 N 条会话
    */
   ipcMain.handle('session:getRecent', async (_, dbSessionId: string, limit: number) => {
-    console.log('[session:getRecent] Query params:', { dbSessionId, limit })
     try {
-      const db = databaseCore.openDatabase(dbSessionId, true)
-      if (!db) {
-        console.log('[session:getRecent] Failed to open database')
-        return []
-      }
-
-      // 先检查表是否存在
-      const tableInfo = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='chat_session'").get()
-      console.log('[session:getRecent] chat_session table:', tableInfo ? 'exists' : 'not exists')
-
-      if (!tableInfo) {
-        return []
-      }
-
-      const sessions = db
-        .prepare(
-          `
-          SELECT
-            id,
-            start_ts as startTs,
-            end_ts as endTs,
-            message_count as messageCount,
-            summary
-          FROM chat_session
-          ORDER BY start_ts DESC
-          LIMIT ?
-        `
-        )
-        .all(limit) as Array<{
-        id: number
-        startTs: number
-        endTs: number
-        messageCount: number
-        summary: string | null
-      }>
-
-      console.log('[session:getRecent] Query result count:', sessions.length)
-      return sessions
+      return await worker.getRecentChatSessions(dbSessionId, limit)
     } catch (error) {
       console.error('Failed to query recent sessions:', error)
       return []

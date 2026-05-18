@@ -9,7 +9,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import type { ParseProgress } from '../parser'
 import type { StreamImportResult } from './import'
-import { openDatabase } from '../database/core'
+
 import { getDatabaseDir, getCacheDir, ensureDir } from '../paths'
 import { getNlpDir } from '../nlp/dictManager'
 
@@ -770,6 +770,24 @@ export async function getSessions(sessionId: string): Promise<ChatSessionItem[]>
   return sendToWorker('getSessions', { sessionId })
 }
 
+/**
+ * 根据时间范围查询会话列表
+ */
+export async function getSessionsByTimeRange(
+  sessionId: string,
+  startTs: number,
+  endTs: number
+): Promise<ChatSessionItem[]> {
+  return sendToWorker('getSessionsByTimeRange', { sessionId, startTs, endTs })
+}
+
+/**
+ * 获取最近 N 条会话
+ */
+export async function getRecentChatSessions(sessionId: string, limit: number): Promise<ChatSessionItem[]> {
+  return sendToWorker('getRecentChatSessions', { sessionId, limit })
+}
+
 // ==================== AI 工具专用查询函数 ====================
 
 export type { SessionSearchResultItem, SessionMessagesResult } from './query/session'
@@ -806,7 +824,6 @@ export interface SessionSummaryItem {
 
 /**
  * 获取带摘要的会话列表（用于 AI 工具）
- * 直接在主进程中查询，不通过 Worker
  */
 export async function getSessionSummaries(
   sessionId: string,
@@ -815,70 +832,7 @@ export async function getSessionSummaries(
     timeFilter?: { startTs: number; endTs: number }
   }
 ): Promise<SessionSummaryItem[]> {
-  const db = openDatabase(sessionId, true)
-  if (!db) {
-    return []
-  }
-
-  const { limit = 50, timeFilter } = options
-
-  let sql = `
-    SELECT
-      cs.id,
-      cs.start_ts as startTs,
-      cs.end_ts as endTs,
-      cs.message_count as messageCount,
-      cs.summary
-    FROM chat_session cs
-    WHERE cs.summary IS NOT NULL AND cs.summary != ''
-  `
-  const params: unknown[] = []
-
-  if (timeFilter) {
-    sql += ' AND cs.start_ts >= ? AND cs.start_ts <= ?'
-    params.push(timeFilter.startTs, timeFilter.endTs)
-  }
-
-  sql += ' ORDER BY cs.start_ts DESC LIMIT ?'
-  params.push(limit)
-
-  try {
-    const sessions = db.prepare(sql).all(...params) as Array<{
-      id: number
-      startTs: number
-      endTs: number
-      messageCount: number
-      summary: string | null
-    }>
-
-    // 为每个会话获取参与者
-    const results: SessionSummaryItem[] = []
-    for (const session of sessions) {
-      const participantsSql = `
-        SELECT DISTINCT COALESCE(mb.group_nickname, mb.account_name, mb.platform_id) as name
-        FROM message_context mc
-        JOIN message m ON m.id = mc.message_id
-        JOIN member mb ON mb.id = m.sender_id
-        WHERE mc.session_id = ?
-        LIMIT 10
-      `
-      const participants = db.prepare(participantsSql).all(session.id) as Array<{ name: string }>
-
-      results.push({
-        id: session.id,
-        startTs: session.startTs,
-        endTs: session.endTs,
-        messageCount: session.messageCount,
-        participants: participants.map((p) => p.name),
-        summary: session.summary,
-      })
-    }
-
-    return results
-  } catch (error) {
-    console.error('Failed to get session summaries:', error)
-    return []
-  }
+  return sendToWorker('getSessionSummaries', { sessionId, options })
 }
 
 // ==================== 自定义筛选 API ====================

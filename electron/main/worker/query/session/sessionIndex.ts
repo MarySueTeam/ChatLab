@@ -9,14 +9,17 @@ import {
   hasSessionIndex as coreHasSessionIndex,
   getSessionIndexStats as coreGetSessionIndexStats,
   getChatSessionList as coreGetChatSessionList,
+  getSessionsByTimeRange as coreGetSessionsByTimeRange,
+  getRecentChatSessions as coreGetRecentChatSessions,
   getChatSessionSummary as coreGetChatSessionSummary,
   saveChatSessionSummary as coreSaveChatSessionSummary,
   updateSessionGapThreshold as coreUpdateSessionGapThreshold,
   clearSessionIndex as coreClearSessionIndex,
   generateSessionIndex as coreGenerateSessionIndex,
   generateIncrementalSessionIndex as coreGenerateIncrementalSessionIndex,
+  getSessionSummaries as coreGetSessionSummaries,
 } from '@openchatlab/core'
-import type { ChatSessionItem, SessionIndexStats } from '@openchatlab/core'
+import type { ChatSessionItem, SessionIndexStats, SessionSummaryData } from '@openchatlab/core'
 import { openWritableDatabase, openReadonlyDatabase, closeDatabase } from './core'
 import { wrapAsDatabaseAdapter } from '../../core'
 
@@ -85,6 +88,21 @@ export function updateSessionGapThreshold(sessionId: string, gapThreshold: numbe
 
 export function getSessions(sessionId: string): ChatSessionItem[] {
   return withReadonlyAdapter(sessionId, (adapter) => coreGetChatSessionList(adapter), [])
+}
+
+export function getSessionsByTimeRange(sessionId: string, startTs: number, endTs: number): ChatSessionItem[] {
+  return withReadonlyAdapter(sessionId, (adapter) => coreGetSessionsByTimeRange(adapter, startTs, endTs), [])
+}
+
+export function getRecentChatSessions(sessionId: string, limit: number): ChatSessionItem[] {
+  return withReadonlyAdapter(sessionId, (adapter) => coreGetRecentChatSessions(adapter, limit), [])
+}
+
+export function getSessionSummariesInWorker(
+  sessionId: string,
+  options?: { limit?: number; timeFilter?: { startTs: number; endTs: number } }
+): SessionSummaryData[] {
+  return withReadonlyAdapter(sessionId, (adapter) => coreGetSessionSummaries(adapter, options), [])
 }
 
 export function saveSessionSummary(sessionId: string, chatSessionId: number, summary: string): void {

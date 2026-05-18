@@ -62,6 +62,9 @@ import {
   getSessionStats,
   updateSessionGapThreshold,
   getSessions,
+  getSessionsByTimeRange,
+  getRecentChatSessions,
+  getSessionSummariesInWorker,
   searchSessions,
   getSessionMessages,
   // 自定义筛选
@@ -228,6 +231,9 @@ const syncHandlers: Record<string, (payload: any) => any> = {
   getSessionStats: (p) => getSessionStats(p.sessionId),
   updateSessionGapThreshold: (p) => updateSessionGapThreshold(p.sessionId, p.gapThreshold),
   getSessions: (p) => getSessions(p.sessionId),
+  getSessionsByTimeRange: (p) => getSessionsByTimeRange(p.sessionId, p.startTs, p.endTs),
+  getRecentChatSessions: (p) => getRecentChatSessions(p.sessionId, p.limit),
+  getSessionSummaries: (p) => getSessionSummariesInWorker(p.sessionId, p.options),
   searchSessions: (p) => searchSessions(p.sessionId, p.keywords, p.timeFilter, p.limit, p.previewCount),
   getSessionMessages: (p) => getSessionMessages(p.sessionId, p.chatSessionId, p.limit),
 
