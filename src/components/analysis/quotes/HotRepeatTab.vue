@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { RepeatAnalysis } from '@openchatlab/chart-ranking/types'
-import { queryRepeatAnalysis } from '@openchatlab/chart-ranking/queries'
+import type { RepeatAnalysis } from '@/features/charts-ranking/types'
+import { queryRepeatAnalysis } from '@/features/charts-ranking/queries'
 import { ListPro } from '@/components/charts'
 import { LoadingState, EmptyState, SectionCard } from '@/components/UI'
 import { formatDate, getRankBadgeClass } from '@/utils'

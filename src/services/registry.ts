@@ -104,7 +104,7 @@ async function initWebServeAdapters(): Promise<void> {
 }
 
 /**
- * chart-* packages (packages/chart-ranking, chart-message, etc.) directly
+ * chart-* modules (src/features/charts-ranking, charts-message, etc.) directly
  * call window.chatApi.pluginQuery / pluginCompute / getMemberActivity /
  * getAvailableYears. In Electron, these are injected by the preload script.
  * In web-serve mode, we install equivalent shims backed by DataService.
