@@ -11,6 +11,9 @@ export { BetterSqliteAdapter, openBetterSqliteDatabase } from './better-sqlite3-
 export { writeParseResultToDb } from './import'
 export type { ImportMeta, WriteParseResultStats } from './import'
 
+// FTS5 full-text search operations
+export { hasFtsTable, createFtsTable, buildFtsIndex, rebuildFtsIndex, insertFtsEntries, searchByFts } from './fts'
+
 // AI Logger
 export { AiLogger, extractErrorInfo, extractErrorStack } from './ai'
 export { NodePathProvider } from './node-path-provider'
