@@ -115,14 +115,11 @@ importers:
       '@electron-toolkit/tsconfig':
         specifier: ^1.0.1
         version: 1.0.1(@types/node@25.2.2)
-      '@electron/rebuild':
-        specifier: ^4.0.1
-        version: 4.0.3
       '@types/better-sqlite3':
         specifier: ^7.6.13
         version: 7.6.13
       electron:
-        specifier: ^35.0.0
+        specifier: 35.7.5
         version: 35.7.5
       electron-builder:
         specifier: ^26.0.12
