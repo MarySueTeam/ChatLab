@@ -1,5 +1,53 @@
 [
   {
+    "version": "0.21.0",
+    "date": "2026-05-22",
+    "summary": "This update adds MCP support, unifies multi-platform import and service layers, and improves Web, AI, sync, and release stability.",
+    "changes": [
+      {
+        "type": "feat",
+        "items": [
+          "Support a unified folder import flow across Electron and Web mode for multi-file chat history formats",
+          "【MCP】Add a standalone command entry and integrate MCP settings into the settings page",
+          "【MCP】Expand the server to 19 tools with compact text and JSON output formats"
+        ]
+      },
+      {
+        "type": "fix",
+        "items": [
+          "Harden directory import path handling to reduce import failure risks",
+          "Fix a race condition that could occur when adding new subscriptions",
+          "Parse MiniMax streaming <think> content correctly as thinking events",
+          "【CLI Web】Fix incremental import support",
+          "【CLI Web】Keep session not-found and member history behavior aligned with the desktop app",
+          "【CLI Web】Fix the Node runtime configuration for the development server",
+          "【MCP】Fix native module ABI binding mismatches during startup"
+        ]
+      },
+      {
+        "type": "refactor",
+        "items": [
+          "Unify the shared service layer for CLI Web and Electron to reduce duplicated route and IPC logic",
+          "【MCP】Trim the externally exposed tool registry to reduce tool schema cost for external AI agents",
+          "【MCP】Extract core MCP capabilities into a standalone shared package and simplify CLI and desktop integration",
+          "【MCP】Simplify settings page integration and reduce desktop-side helper complexity"
+        ]
+      },
+      {
+        "type": "ci",
+        "items": ["【CLI】Publish the npm package as part of the release workflow"]
+      },
+      {
+        "type": "docs",
+        "items": ["Document prefix and ordering rules for platform-specific changelog entries"]
+      },
+      {
+        "type": "chore",
+        "items": ["【CLI】【MCP】Complete the configuration and release notes needed for npm publishing"]
+      }
+    ]
+  },
+  {
     "version": "0.20.0",
     "date": "2026-05-19",
     "summary": "This update unifies the core multi-platform architecture and improves AI, import, sync, and desktop build stability. It also prepares for the standalone Web, CLI, and MCP capabilities in the next release; please update before using the CLI so data can be pre-migrated.",
