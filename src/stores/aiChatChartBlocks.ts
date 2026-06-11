@@ -181,9 +181,26 @@ export function replaceRenderOnlyToolPendingBlockWithCharts<T>(
   toolCallId: string | undefined,
   charts: ChartPayload[]
 ): Array<T | ChartContentBlock> {
-  const withoutPending = removeRenderOnlyToolPendingBlock(blocks, toolName, toolCallId)
-  const uniqueCharts = charts.filter((chart) => !hasDuplicateChart(withoutPending, chart))
-  return [...withoutPending, ...toChartContentBlocks(uniqueCharts)]
+  const next = [...blocks] as Array<T | ChartContentBlock>
+  let pendingIndex = -1
+
+  for (let index = next.length - 1; index >= 0; index--) {
+    if (isMatchingPendingRenderOnlyToolBlock(next[index], toolName, toolCallId)) {
+      pendingIndex = index
+      break
+    }
+  }
+
+  const duplicateBase = pendingIndex >= 0 ? next.filter((_block, index) => index !== pendingIndex) : next
+  const uniqueCharts = charts.filter((chart) => !hasDuplicateChart(duplicateBase, chart))
+  const chartBlocks = toChartContentBlocks(uniqueCharts)
+
+  if (pendingIndex >= 0) {
+    next.splice(pendingIndex, 1, ...chartBlocks)
+    return next
+  }
+
+  return [...next, ...chartBlocks]
 }
 
 export function finishRenderOnlyToolResultBlocks<T>(

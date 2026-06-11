@@ -120,6 +120,28 @@ describe('aiChat chart block helpers', () => {
     assert.equal(nextBlocks[1]?.type, 'chart')
   })
 
+  it('keeps render-only charts in tool call order when results arrive out of order', () => {
+    const blocks = [
+      createRenderOnlyToolPendingBlock('render_chart', { title: '第一张图' }, 'call_chart_a'),
+      createRenderOnlyToolPendingBlock('render_chart', { title: '第二张图' }, 'call_chart_b'),
+    ].filter((block): block is NonNullable<typeof block> => block !== null)
+
+    const afterSecondCompletes = replaceRenderOnlyToolPendingBlockWithCharts(blocks, 'render_chart', 'call_chart_b', [
+      secondChart,
+    ])
+    const afterFirstCompletes = replaceRenderOnlyToolPendingBlockWithCharts(
+      afterSecondCompletes,
+      'render_chart',
+      'call_chart_a',
+      [chart]
+    )
+    const chartTitles = afterFirstCompletes
+      .filter((block): block is { type: 'chart'; chart: ChartPayload } => block.type === 'chart')
+      .map((block) => block.chart.spec.title)
+
+    assert.deepEqual(chartTitles, ['Daily messages', 'Selected members'])
+  })
+
   it('does not append duplicate render-only charts already present in the message', () => {
     const reorderedSpecChart: ChartPayload = {
       ...chart,
